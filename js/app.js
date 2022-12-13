@@ -4,6 +4,8 @@ console.log('Hello Jordan');
 
 let pictureArray = [];
 let votingRounds = 25;
+let preIndex = [-1, -1, -1];
+
 
 // ***** DOM WINDOWS *****
 let imgContainer = document.getElementById('img-container');
@@ -14,7 +16,7 @@ let imgThree = document.getElementById('img-three');
 
 
 let resultsBtn = document.getElementById('show-results-btn');
-let resultsList = document.getElementById('results-container');
+let canvasElem = document.getElementById('myChart');
 
 // ***** CONSTRUCTOR FUNCTION *****
 
@@ -38,10 +40,22 @@ function renderImg() {
   let imgThreeIndex = randomIndex();
 
   // Validation to make sure numbers are unique
-  while (imgOneIndex === imgTwoIndex || imgOneIndex === imgThreeIndex || imgTwoIndex === imgThreeIndex) {
+  while (preIndex.includes(imgOneIndex) || imgOneIndex === imgTwoIndex || imgOneIndex === imgThreeIndex) {
+    imgOneIndex = randomIndex();
+  }
+
+  while (preIndex.includes(imgTwoIndex) || imgOneIndex === imgTwoIndex || imgTwoIndex === imgThreeIndex) {
     imgTwoIndex = randomIndex();
+  }
+
+  while (preIndex.includes(imgThreeIndex) || imgThreeIndex === imgTwoIndex || imgOneIndex === imgThreeIndex) {
     imgThreeIndex = randomIndex();
   }
+
+  preIndex[0] = imgOneIndex;
+  preIndex[1] = imgTwoIndex;
+  preIndex[2] = imgThreeIndex;
+  console.log(preIndex);
 
   imgOne.src = pictureArray[imgOneIndex].img;
   imgTwo.src = pictureArray[imgTwoIndex].img;
@@ -58,12 +72,51 @@ function renderImg() {
   pictureArray[imgThreeIndex].views++;
 }
 
+function renderChart() {
+  let pictureName = [];
+  let pictureVotes = [];
+  let pictureViews = [];
+
+  for (let i = 0; i < pictureArray.length; i++) {
+    pictureName.push(pictureArray[i].name);
+    pictureVotes.push(pictureArray[i].votes);
+    pictureViews.push(pictureArray[i].views);
+  }
+
+  let chartObj = {
+    type: 'bar',
+    data: {
+      labels: pictureName,
+      datasets: [{
+        label: '# of Votes',
+        data: pictureVotes,
+        borderWidth: 1
+
+      },
+      {
+        label: '# of Views',
+        data: pictureViews,
+        borderWidth: 1
+
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  new Chart(canvasElem, chartObj);
+}
+
 // ***** EVENT HANDLERS*****
 
 function handleClick(event) {
 
   let imgClicked = event.target.title;
-  // console.dir(imgClicked);
 
   for (let i = 0; i < pictureArray.length; i++) {
     if (imgClicked === pictureArray[i].name) {
@@ -73,22 +126,16 @@ function handleClick(event) {
 
   votingRounds--;
   renderImg();
-  if(votingRounds === 0){
+  if (votingRounds === 0) {
     imgContainer.removeEventListener('click', handleClick);
   }
 }
 
-function handleResults(){
-  if(votingRounds === 0){
-    for(let i = 0; i < pictureArray.length; i++){
-      let liElem = document.createElement('li');
-      liElem.textContent = `${pictureArray[i].name} - views: ${pictureArray[i].views} & votes: ${pictureArray[i].votes}`;
-      resultsList.appendChild(liElem);
-    }
-    resultsBtn.removeEventListener('click', handleResults);
+function handleResults() {
+  if (votingRounds === 0) {
+    renderChart();
   }
 }
-
 // ***** EXECUTABLE CODE *****
 let bag = new RandomImage('bag');
 let banana = new RandomImage('banana');

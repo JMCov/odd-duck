@@ -129,6 +129,11 @@ function handleClick(event) {
   if (votingRounds === 0) {
     imgContainer.removeEventListener('click', handleClick);
   }
+
+  let stringifiedPictures = JSON.stringify(pictureArray);
+  localStorage.setItem('myPictures', stringifiedPictures);
+  console.log('Stringified data', stringifiedPictures);
+
 }
 
 function handleResults() {
@@ -137,29 +142,35 @@ function handleResults() {
   }
 }
 // ***** EXECUTABLE CODE *****
-let bag = new RandomImage('bag');
-let banana = new RandomImage('banana');
-let bathroom = new RandomImage('bathroom');
-let boots = new RandomImage('boots');
-let breakfast = new RandomImage('breakfast');
-let bubblegum = new RandomImage('bubblegum');
-let chair = new RandomImage('chair');
-let cthulhu = new RandomImage('cthulhu');
-let dogDuck = new RandomImage('dog-duck');
-let dragon = new RandomImage('dragon');
-let pen = new RandomImage('pen');
-let petSweep = new RandomImage('pet-sweep');
-let scissors = new RandomImage('scissors');
-let shark = new RandomImage('shark');
-let sweep = new RandomImage('sweep', 'png');
-let tauntaun = new RandomImage('tauntaun');
-let unicorn = new RandomImage('unicorn');
-let waterCan = new RandomImage('water-can');
-let wineGlass = new RandomImage('wine-glass');
 
+let storedPictures = localStorage.getItem('myPictures');
+let parsedData = JSON.parse(storedPictures);
 
+if (storedPictures) {
+  pictureArray = parsedData;
+} else {
+  let bag = new RandomImage('bag');
+  let banana = new RandomImage('banana');
+  let bathroom = new RandomImage('bathroom');
+  let boots = new RandomImage('boots');
+  let breakfast = new RandomImage('breakfast');
+  let bubblegum = new RandomImage('bubblegum');
+  let chair = new RandomImage('chair');
+  let cthulhu = new RandomImage('cthulhu');
+  let dogDuck = new RandomImage('dog-duck');
+  let dragon = new RandomImage('dragon');
+  let pen = new RandomImage('pen');
+  let petSweep = new RandomImage('pet-sweep');
+  let scissors = new RandomImage('scissors');
+  let shark = new RandomImage('shark');
+  let sweep = new RandomImage('sweep', 'png');
+  let tauntaun = new RandomImage('tauntaun');
+  let unicorn = new RandomImage('unicorn');
+  let waterCan = new RandomImage('water-can');
+  let wineGlass = new RandomImage('wine-glass');
 
-pictureArray.push(bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, waterCan, wineGlass);
+  pictureArray.push(bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, waterCan, wineGlass);
+}
 
 renderImg();
 
